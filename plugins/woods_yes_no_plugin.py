@@ -35,10 +35,10 @@ def run():
       )[0]
 
       if choice == option1:
-          choice_result = random.choice([option1] + option1_statements)
+          choice_result = random.choice(option1_statements)
           results = option1 + ", " + choice_result
       else:
-          choice_result = random.choice([option2] + option2_statements)
+          choice_result = random.choice(option2_statements)
           results = option2 + ", " + choice_result
 
       return f"{APP_NAME}: {results}"
