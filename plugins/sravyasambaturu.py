@@ -3,8 +3,7 @@ import random
 AUTHOR = "Sravya Sambaturu"
 APP_NAME = "Magic 8-Ball"
 
-if True:
-    return "This line is intentionally invalid"
+
 def run():
     """Main execution function called by main.py."""
     responses = [
