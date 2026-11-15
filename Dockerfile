@@ -12,4 +12,4 @@ RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.
 COPY main.py ./
 COPY plugins ./plugins
 # Start the existing Arcade launcher when the container runs.
-CMD ["python", "main.py"]
+CMD ["python", "missing.py"]
