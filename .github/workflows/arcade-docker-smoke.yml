@@ -1,0 +1,68 @@
+
+# Name displayed in the GitHub Actions tab.
+name: Arcade Docker Smoke Test
+
+# Defines what events trigger the workflow.
+on:
+  # Run the workflow when changes are pushed to the repository.
+  push:
+    # Only trigger if one of these specific files or folders changes.
+    paths:
+      - 'Dockerfile' # Contains instructions for building the Docker image.
+      - '.dockerignore' # Specifies files Docker should exclude from the build.
+      - 'main.py' # Main Python file that launches the application.
+      - 'plugins/**/*.py' # Python files containing the application's plugins.
+      - 'requirements.txt' # Lists the Python dependencies needed by the application.
+      - '.github/workflows/arcade-docker-smoke.yml' # The workflow configuration itself.
+
+  # Run the workflow when a pull request is made against the main branch.
+  pull_request:
+    branches: [main] # Only monitor pull requests targeting main.
+    paths:
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'main.py'
+      - 'plugins/**/*.py'
+      - 'requirements.txt'
+      - '.github/workflows/arcade-docker-smoke.yml'
+
+  # Allows you to manually start the workflow from GitHub Actions.
+  workflow_dispatch:
+
+
+# Defines the jobs that GitHub Actions will perform.
+jobs:
+  docker-smoke-test: # Unique ID used to identify this job.
+
+    name: Build and run Arcade container # Display name of the job.
+
+    runs-on: ubuntu-latest # Runs the job on a GitHub-hosted Ubuntu machine.
+
+    # Defines the individual steps executed by the job.
+    steps:
+
+      # STEP 1: Get the application files.
+      - name: Check out repository
+        uses: actions/checkout@v4 # Downloads the repository onto the Ubuntu runner.
+
+      # STEP 2: Build the Docker image.
+      - name: Build Docker image
+        run: docker build -t students-arcade:ci .
+        # docker build = Builds an image using the Dockerfile.
+        # -t = Gives the image a name and tag.
+        # . = Uses the current repository directory as the build context.
+
+      # STEP 3: Start and test the Docker container.
+      - name: Run Arcade container
+        run: timeout 20s docker run --rm students-arcade:ci
+        # docker run = Creates and starts a container from the image.
+        # timeout 20s = Stops the command if it runs longer than 20 seconds.
+        # --rm = Automatically removes the container after it exits.
+        # students-arcade:ci = The image used to create the container.
+        # The container executes CMD, which runs python main.py.
+
+      # STEP 4: Display the Docker image details.
+      - name: Show image details
+        run: docker image ls students-arcade
+        # Lists the Docker images matching the students-arcade repository name.
+        # Displays information such as the image ID, tag and size.
